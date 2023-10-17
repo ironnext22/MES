@@ -1,5 +1,11 @@
 import numpy as np
 import re
+
+class GlobalData:
+    def __init__(self,data:dict):
+        self.Data = data
+    def __repr__(self):
+        return repr(self.Data)
 class Node:
     def __init__(self,numer:int, x:float , y:float):
         self.numer = numer
@@ -26,9 +32,10 @@ class Dane:
     def __init__(self, path):
         self.filepath = path
         self.data = {}
+        self.data2 = {}
         self.current_section = None
 
-    def wczytaj(self):
+    def wczytaj3(self):
         with open(self.filepath,"r") as file:
             for line in file:
                 line = line.strip()
@@ -40,6 +47,38 @@ class Dane:
                     values = re.split(r"\s+",line.strip())
                     cv = [float(value.rstrip(",")) for value in values]
                     self.data[self.current_section].append(cv)
+        file.close()
+
+
+    def wczytaj2(self):
+        with open(self.filepath,"r") as file:
+            for line in file:
+                line = line.strip()
+                if line.startswith("*"): break
+                values = re.split(r"\s",line.strip())
+                if values[0] == "Elements" or values[0] == "Nodes":
+                    self.data2[values[0]+" "+values[1]] = float(values[2])
+                else:
+                    self.data2[values[0]] = float(values[1])
+        file.close()
+        return self.data2
+    def wczytaj(self):
+        self.wczytaj3()
+        self.wczytaj2()
+        t = self.data["Node"]
+        t2 = self.data["Element, type=DC2D4"]
+        pomnode = []
+        pomelement = []
+
+        for i in t:
+            pomnode.append(Node(i[0], i[1], i[2]))
+        for i in t2:
+            pomelement.append(Element(i[0], i[1:]))
+
+        grid = Grid(pomnode,pomelement)
+        glob = GlobalData(self.wczytaj2())
+
+        return grid,glob
 
     def wpisz_dane(self):
         for section, data in self.data.items():
