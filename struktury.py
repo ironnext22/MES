@@ -12,7 +12,7 @@ class Node:
         self.x = x
         self.y = y
     def __str__(self):
-        return f"{self.x},{self.y}"
+        return f"{self.x},{self.y}\n"
     def __repr__(self):
         return repr([self.numer,self.x,self.y])
 
@@ -24,9 +24,10 @@ class Element:
         return repr(self.E)
 
 class Grid:
-    def __init__(self, N:np.array(Node),E:np.array(Element)):
-        self.Nodes = N
-        self.Element = E
+    def __init__(self, N:[Node],E:[Element]):
+        self.Nodes= np.array(N)
+        self.Element = np.array(E)
+
 
 class Dane:
     def __init__(self, path):
@@ -64,7 +65,6 @@ class Dane:
         return self.data2
     def wczytaj(self):
         self.wczytaj3()
-        self.wczytaj2()
         t = self.data["Node"]
         t2 = self.data["Element, type=DC2D4"]
         pomnode = []
@@ -78,7 +78,7 @@ class Dane:
         grid = Grid(pomnode,pomelement)
         glob = GlobalData(self.wczytaj2())
 
-        return grid,glob
+        return grid, glob
 
     def wpisz_dane(self):
         for section, data in self.data.items():
