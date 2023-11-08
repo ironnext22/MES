@@ -16,7 +16,6 @@ class gauss:
             for j in range(len(self.x)):
                 integral += self.w[i]*self.w[j]*f(self.x[i],self.x[j])
         return integral
-        #return np.sum(np.outer(self.w, self.w) * f(np.outer(self.x, np.ones_like(self.x)), np.outer(np.ones_like(self.x), self.x)))
 
 
 

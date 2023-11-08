@@ -1,5 +1,5 @@
 import numpy as np
-
+from jakobian import ElementUniwersalny
 from struktury import *
 from całki import *
 
@@ -27,3 +27,5 @@ def f2(x,y):
 c = gauss(3,1)
 print(c.całka(f))
 print(c.całka2d(f2))
+
+w = ElementUniwersalny(2)
