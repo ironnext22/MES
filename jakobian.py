@@ -1,61 +1,18 @@
 import numpy as np
-def dN1ksi(eta):
-    return -1/4*(1-eta)
-def dN2ksi(eta):
-    return 1/4*(1-eta)
-def dN3ksi(eta):
-    return 1/4*(1-eta)
-def dN4ksi(eta):
-    return -1/4*(1-eta)
+from ElementUniwersalny import ElementUniwersalny
 
-def dN1eta(ksi):
-    return -1/4*(1-ksi)
-def dN2eta(ksi):
-    return -1/4*(1-ksi)
-def dN3eta(ksi):
-    return 1/4*(1-ksi)
-def dN4eta(ksi):
-    return 1/4*(1-ksi)
+class Jakobian:
+    def __init__(self, x: [], y: [], e: ElementUniwersalny, punkt: int):
+        self.x = np.array(x)
+        self.y = np.array(y)
+        self.dX_DKsi = np.sum([self.x[i] * e.dNKsi[punkt][i] for i in range(np.size(self.x))])
+        self.dX_DEta = np.sum([self.x[i] * e.dNEta[punkt][i] for i in range(np.size(self.x))])
+        self.dY_DKsi = np.sum([self.y[i] * e.dNKsi[punkt][i] for i in range(np.size(self.x))])
+        self.dY_DEta = np.sum([self.y[i] * e.dNEta[punkt][i] for i in range(np.size(self.x))])
+
+        self.jac = np.array([[self.dX_DKsi,self.dY_DKsi],[self.dX_DEta,self.dY_DEta]])
+        self.det = np.linalg.det(self.jac)
+        self.inv = 1/self.det * self.jac
 
 
 
-
-class ElementUniwersalny:
-    def __init__(self, n:int):
-        self.tab = np.polynomial.legendre.leggauss(n)[0]
-        self.dNKsi = np.zeros([4, n**2])
-        self.dNEta = np.zeros([4, n**2])
-        self.pom = 0
-        for i in range(n**2):
-            if (i != 0 and i % n == 0): self.pom += 1
-            self.dNKsi[i][0] = dN4ksi(self.tab[self.pom])
-        self.pom = 0
-        for i in range(n**2):
-            if (i != 0 and i % n == 0): self.pom += 1
-            self.dNKsi[i][1] = dN3ksi(self.tab[self.pom])
-        self.pom = n-1
-        for i in range(n**2):
-            if(i!=0 and i%n==0): self.pom -= 1
-            self.dNKsi[i][2] = dN2ksi(self.tab[self.pom])
-        self.pom = n-1
-        for i in range(n**2):
-            if(i!=0 and i%n==0): self.pom -= 1
-            self.dNKsi[i][3] = dN1ksi(self.tab[self.pom])
-        self.pom = 0
-
-        for i in range(n**2):
-            self.pom = i%n
-            #if (i != 0 and i % n == 0): self.pom += 1
-            self.dNEta[i][0] = dN1eta(self.tab[self.pom])
-        for i in range(n**2):
-            self.pom = i % n
-            #if (i != 0 and i % n == 0): self.pom += 1
-            self.dNEta[i][1] = dN2eta(self.tab[self.pom])
-        for i in range(n**2):
-            self.pom = i % n
-            #if(i!=0 and i%n==0): self.pom -= 1
-            self.dNEta[i][2] = dN3eta(self.tab[self.pom])
-        for i in range(n**2):
-            self.pom = i % n
-            #if(i!=0 and i%n==0): self.pom -= 1
-            self.dNEta[i][3] = dN4eta(self.tab[self.pom])
