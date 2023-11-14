@@ -19,7 +19,8 @@ def dN4eta(ksi):
 
 class ElementUniwersalny:
     def __init__(self, n:int):
-        self.tab = np.polynomial.legendre.leggauss(n)[0]
+        self.n = n
+        self.tab, self.waga = np.polynomial.legendre.leggauss(n)
         self.dNKsi = np.zeros([n**2, 4])
         self.dNEta = np.zeros([n**2, 4])
         self.pom = 0

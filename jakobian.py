@@ -2,7 +2,7 @@ import numpy as np
 from ElementUniwersalny import ElementUniwersalny
 
 class Jakobian:
-    def __init__(self, x: [], y: [], e: ElementUniwersalny, punkt: int):
+    def __init__(self, x: [], y: [], e: ElementUniwersalny, punkt: int = 0):
         self.x = np.array(x)
         self.y = np.array(y)
         self.dX_DKsi = np.sum([self.x[i] * e.dNKsi[punkt][i] for i in range(np.size(self.x))])
@@ -12,7 +12,6 @@ class Jakobian:
 
         self.jac = np.array([[self.dX_DKsi,self.dY_DKsi],[self.dX_DEta,self.dY_DEta]])
         self.det = np.linalg.det(self.jac)
-        self.inv = 1/self.det * self.jac
-
-
+        self.inv = 1/self.det * np.array([[self.dY_DEta,-self.dY_DKsi],[-self.dX_DEta,self.dX_DKsi]])
+        #self.inv = np.linalg.inv(self.jac)
 
