@@ -5,6 +5,7 @@ from całki import *
 from jakobian import Jakobian
 from Hmatrix import Hmatrix
 from obliczanie import licz
+from HBC import HBC
 
 w = Dane("Test1_4_4.txt")
 w2 = Dane("Test3_31_31_kwadrat.txt")
@@ -39,11 +40,12 @@ grid3, gd3 = w3.wczytaj()
 # print("dNKsi: \n")
 # print(w.dNKsi)
 
+print(np.polynomial.legendre.leggauss(3))
 XY = grid.Nodes
 # print(XY)
 
-# x = [0,0.025,0.025,0]
-# y = [0,0,0.025,0.025]
+x = [0, 0.025, 0.025, 0]
+y = [0, 0, 0.025, 0.025]
 e = ElementUniwersalny(2)
 # j = Jakobian(x,y,e)
 #
@@ -59,13 +61,17 @@ XY = grid3.Nodes
 # print(x.T)
 x = [i.x for i in XY]
 y = [i.y for i in XY]
-xpom = [x[0],x[1],x[5],x[4]]
-ypom = [y[0],y[1],y[5],y[4]]
-j = Jakobian(xpom,ypom,e,0)
-h = Hmatrix(xpom,ypom,e,gd.Data["Conductivity"])
+xpom = [x[0], x[1], x[5], x[4]]
+ypom = [y[0], y[1], y[5], y[4]]
+j = Jakobian(xpom, ypom, e, 0)
+h = Hmatrix(xpom, ypom, e, gd.Data["Conductivity"])
 # print(j.inv)
 # print(h.dNidx)
-#print(h.H)
+# print(h.H)
 
-l = licz(grid3,gd3,2)
+l = licz(grid3, gd3, 2)
+
 l.summary()
+
+# h = HBC(e, 25, 0.0125)
+# print(h.HBC)

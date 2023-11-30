@@ -2,8 +2,9 @@ import numpy as np
 import re
 
 class GlobalData:
-    def __init__(self,data:dict):
+    def __init__(self,data:dict,BC:[]):
         self.Data = data
+        self.BC = np.array(BC)
     def __repr__(self):
         return repr(self.Data)
 class Node:
@@ -17,9 +18,9 @@ class Node:
         return repr([self.numer,self.x,self.y])
 
 class Element:
-    def __init__(self,numer:int,E:np.array(int)):
+    def __init__(self,numer:int,E):
         self.numer = numer
-        self.E = E
+        self.E = np.array(E)
     def __repr__(self):
         return repr(self.E)
 
@@ -76,7 +77,7 @@ class Dane:
             pomelement.append(Element(i[0], i[1:]))
 
         grid = Grid(pomnode,pomelement)
-        glob = GlobalData(self.wczytaj2())
+        glob = GlobalData(self.wczytaj2(),self.data["BC"])
 
         return grid, glob
 
