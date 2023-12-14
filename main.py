@@ -10,9 +10,11 @@ from HBC import HBC
 w = Dane("Test1_4_4.txt")
 w2 = Dane("Test3_31_31_kwadrat.txt")
 w3 = Dane("Test2_4_4_MixGrid.txt")
+w4 = Dane("Test4_31_31_trapez.txt")
 grid, gd = w.wczytaj()
 grid2, gd2 = w2.wczytaj()
 grid3, gd3 = w3.wczytaj()
+grid4, gd4 = w4.wczytaj()
 #
 # print(grid.Element)
 # print()
@@ -40,7 +42,7 @@ grid3, gd3 = w3.wczytaj()
 # print("dNKsi: \n")
 # print(w.dNKsi)
 
-print(np.polynomial.legendre.leggauss(3))
+# print(np.polynomial.legendre.leggauss(3))
 XY = grid.Nodes
 # print(XY)
 
@@ -69,7 +71,7 @@ h = Hmatrix(xpom, ypom, e, gd.Data["Conductivity"])
 # print(h.dNidx)
 # print(h.H)
 
-l = licz(grid3, gd3, 2)
+l = licz(grid, gd, 2)
 
 l.summary()
 

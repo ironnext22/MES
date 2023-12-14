@@ -21,6 +21,8 @@ class licz:
         self.HBC = np.zeros([int(gd.Data["Elements number"]), 4, 4])
         self.HWB = np.zeros([int(gd.Data["Elements number"]), 4, 4])
         self.P = np.zeros([int(gd.Data["Elements number"]), 4])
+        self.Hglob = np.zeros([grid.Nodes.size, grid.Nodes.size], dtype=float)
+        self.Pglob = np.zeros(grid.Nodes.size, dtype=float)
 
         self.xe = np.zeros([int(gd.Data["Elements number"]), 4])
         for i in range(int(gd.Data["Elements number"])):
@@ -50,10 +52,32 @@ class licz:
         self.HBC = np.flip(self.HBC, 0)
         self.P = np.flip(self.P, 0)
 
+        # print(self.H.shape[0])
+        # print(self.grid.Element[0])
+        for i in range(int(gd.Data["Elements number"])):
+            pom1 = 0
+            print(i)
+            p = self.grid.Element[i].E
+            print(p)
+            for j in p:
+                pom2 = 0
+                for k in p:
+                    self.Hglob[int(j) - 1][int(k) - 1] += self.H[i][pom1][pom2]
+                    self.Hglob[int(j) - 1][int(k) - 1] += self.HBC[i][pom1][pom2]
+                    pom2 += 1
+                pom1 += 1
+
+        for i in range(int(gd.Data["Elements number"])):
+            p = self.grid.Element[i].E
+            pom = 0
+            for j in p:
+                self.Pglob[int(j) - 1] += self.P[i][pom]
+                pom += 1
+
         # for i in range(int(gd.Data["Elements number"])):
         #     self.HWB[i] = self.H[i] + self.HBC[i]
 
-    def summary(self):
+    def summary(self,z=7):
         for i in range(int(self.gd.Data["Elements number"])):
             print(f"Macierz H dla elementu {i + 1}: ")
             print(self.H[i])
@@ -66,6 +90,10 @@ class licz:
             print(f"Wektor P dla elementu {i + 1}: ")
             print(self.P[i])
             print()
+        print("Hglob:")
+        print(self.Hglob.round(decimals=z))
+        print("Pglob:")
+        print(self.Pglob.round(decimals=z))
         # for i in range(int(self.gd.Data["Elements number"])):
         #     print(f"Macierz HWB dla elementu {i + 1}: ")
         #     print(self.HWB[i])
