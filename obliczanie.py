@@ -32,6 +32,8 @@ class licz:
         self.Cglob = np.zeros([grid.Nodes.size, grid.Nodes.size], dtype=float)
         self.solve = np.zeros([iterations + 1, grid.Nodes.size], dtype=float)
         self.solve[0] = self.T0
+        self.pc = np.zeros([int(gd.Data["Elements number"]), 4])
+        self.iter = iterations
 
         self.xe = np.zeros([int(gd.Data["Elements number"]), 4])
         for i in range(int(gd.Data["Elements number"])):
@@ -43,9 +45,10 @@ class licz:
             pom = [self.y[int(a) - 1] for a in self.elements[i].E]
             self.ye[i] = pom
 
+        pom = 0
         for i in range(int(gd.Data["Elements number"])):
             self.H[i] = Hmatrix(self.xe[i], self.ye[i], self.e, gd.Data["Conductivity"]).H
-            self.C[i] = self.C[i] = C(self.e, gd.Data["SpecificHeat"], gd.Data["Density"],
+            self.C[i] = C(self.e, gd.Data["SpecificHeat"], gd.Data["Density"],
                                       [Jakobian(self.xe[i], self.ye[i], self.e, j).det for j in range(self.e.n ** 2)]).C
 
         for i in range(int(gd.Data["Elements number"])):
@@ -77,9 +80,7 @@ class licz:
                     self.Cglob[int(j) - 1][int(k) - 1] += self.C[i][pom1][pom2]
                     pom2 += 1
                 pom1 += 1
-        pc = self.Cglob / gd.Data["SimulationStepTime"]
-        self.HC = self.Hglob + self.Cglob / gd.Data["SimulationStepTime"]
-
+        self.HC = self.Hglob + self.Cglob / float(gd.Data["SimulationStepTime"])
         for i in range(int(gd.Data["Elements number"])):
             p = self.grid.Element[i].E
             pom = 0
@@ -90,7 +91,7 @@ class licz:
 
         self.PCpom = np.zeros(grid.Nodes.size, dtype=float)
         for i in range(iterations):
-            self.PC = np.matmul(pc, self.solve[i])
+            self.PC = np.matmul(self.Cglob / float(gd.Data["SimulationStepTime"]), self.solve[i])
             self.PC = self.PC + self.Pglob
             if i == 0: self.PCpom = self.PC
             self.solve[i + 1] = np.linalg.solve(self.HC, self.PC)
@@ -129,15 +130,11 @@ class licz:
         print("PC:")
         print(self.PCpom.round(decimals=z))
         print()
-        for i in range(int(self.gd.Data["Elements number"])):
+        for i in range(self.iter+1):
             print(f"Solve {i}: ")
-            print(self.solve[i])
+            print(self.solve[i].round(decimals=z))
             print(f"Min {np.min(self.solve[i])}, Max {np.max(self.solve[i])}")
             print()
-        # for i in range(int(self.gd.Data["Elements number"])):
-        #     print(f"Macierz HWB dla elementu {i + 1}: ")
-        #     print(self.HWB[i])
-        #     print()
 
 
 def cd(n1: Node, n2: Node):
