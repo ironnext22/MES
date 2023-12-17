@@ -6,10 +6,12 @@ from jakobian import Jakobian
 from Hmatrix import Hmatrix
 from HBC import HBC
 from P import P
+from C import C
+from pyevtk.hl import gridToVTK
 
 
 class licz:
-    def __init__(self, grid: Grid, gd: GlobalData, n: int):
+    def __init__(self, grid: Grid, gd: GlobalData, n: int, iterations: int):
         self.grid = grid
         self.gd = gd
         self.e = ElementUniwersalny(n)
@@ -20,9 +22,16 @@ class licz:
         self.H = np.zeros([int(gd.Data["Elements number"]), 4, 4])
         self.HBC = np.zeros([int(gd.Data["Elements number"]), 4, 4])
         self.HWB = np.zeros([int(gd.Data["Elements number"]), 4, 4])
+        self.C = np.zeros([int(gd.Data["Elements number"]), 4, 4])
         self.P = np.zeros([int(gd.Data["Elements number"]), 4])
         self.Hglob = np.zeros([grid.Nodes.size, grid.Nodes.size], dtype=float)
         self.Pglob = np.zeros(grid.Nodes.size, dtype=float)
+        self.HC = np.zeros([grid.Nodes.size, grid.Nodes.size], dtype=float)
+        self.PC = np.zeros(grid.Nodes.size, dtype=float)
+        self.T0 = np.array([float(gd.Data["InitialTemp"]) for i in range(grid.Nodes.size)])
+        self.Cglob = np.zeros([grid.Nodes.size, grid.Nodes.size], dtype=float)
+        self.solve = np.zeros([iterations + 1, grid.Nodes.size], dtype=float)
+        self.solve[0] = self.T0
 
         self.xe = np.zeros([int(gd.Data["Elements number"]), 4])
         for i in range(int(gd.Data["Elements number"])):
@@ -36,6 +45,8 @@ class licz:
 
         for i in range(int(gd.Data["Elements number"])):
             self.H[i] = Hmatrix(self.xe[i], self.ye[i], self.e, gd.Data["Conductivity"]).H
+            self.C[i] = self.C[i] = C(self.e, gd.Data["SpecificHeat"], gd.Data["Density"],
+                                      [Jakobian(self.xe[i], self.ye[i], self.e, j).det for j in range(self.e.n ** 2)]).C
 
         for i in range(int(gd.Data["Elements number"])):
             pom = []
@@ -54,30 +65,40 @@ class licz:
 
         # print(self.H.shape[0])
         # print(self.grid.Element[0])
+        pc = np.zeros([grid.Nodes.size, grid.Nodes.size], dtype=float)
         for i in range(int(gd.Data["Elements number"])):
             pom1 = 0
-            print(i)
             p = self.grid.Element[i].E
-            print(p)
             for j in p:
                 pom2 = 0
                 for k in p:
                     self.Hglob[int(j) - 1][int(k) - 1] += self.H[i][pom1][pom2]
                     self.Hglob[int(j) - 1][int(k) - 1] += self.HBC[i][pom1][pom2]
+                    self.Cglob[int(j) - 1][int(k) - 1] += self.C[i][pom1][pom2]
                     pom2 += 1
                 pom1 += 1
+        pc = self.Cglob / gd.Data["SimulationStepTime"]
+        self.HC = self.Hglob + self.Cglob / gd.Data["SimulationStepTime"]
 
         for i in range(int(gd.Data["Elements number"])):
             p = self.grid.Element[i].E
             pom = 0
+
             for j in p:
                 self.Pglob[int(j) - 1] += self.P[i][pom]
                 pom += 1
 
-        # for i in range(int(gd.Data["Elements number"])):
-        #     self.HWB[i] = self.H[i] + self.HBC[i]
+        self.PCpom = np.zeros(grid.Nodes.size, dtype=float)
+        for i in range(iterations):
+            self.PC = np.matmul(pc, self.solve[i])
+            self.PC = self.PC + self.Pglob
+            if i == 0: self.PCpom = self.PC
+            self.solve[i + 1] = np.linalg.solve(self.HC, self.PC)
 
-    def summary(self,z=7):
+        # for i in range(self.solve.shape[0]):
+        #     gridToVTK(f"./solve/foo{i}", np.array(self.x), np.array(self.y), np.array([j for j in range(grid.Nodes.size)]), pointData={"temp": self.solve[i]})
+
+    def summary(self, z=7):
         for i in range(int(self.gd.Data["Elements number"])):
             print(f"Macierz H dla elementu {i + 1}: ")
             print(self.H[i])
@@ -94,6 +115,25 @@ class licz:
         print(self.Hglob.round(decimals=z))
         print("Pglob:")
         print(self.Pglob.round(decimals=z))
+        print()
+        for i in range(int(self.gd.Data["Elements number"])):
+            print(f"Macierz C dla elementu {i + 1}: ")
+            print(self.C[i])
+            print()
+        print("Cglob:")
+        print(self.Cglob.round(decimals=z))
+        print()
+        print("HC:")
+        print(self.HC.round(decimals=z))
+        print()
+        print("PC:")
+        print(self.PCpom.round(decimals=z))
+        print()
+        for i in range(int(self.gd.Data["Elements number"])):
+            print(f"Solve {i}: ")
+            print(self.solve[i])
+            print(f"Min {np.min(self.solve[i])}, Max {np.max(self.solve[i])}")
+            print()
         # for i in range(int(self.gd.Data["Elements number"])):
         #     print(f"Macierz HWB dla elementu {i + 1}: ")
         #     print(self.HWB[i])

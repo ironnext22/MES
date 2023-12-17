@@ -13,7 +13,6 @@ class Hmatrix:
         self.dNidy = np.zeros([e.n ** 2,4])
         self.h = np.zeros([e.n ** 2, 4, 4])
         self.H = np.zeros([4, 4])
-
         for i in range(e.n ** 2):
             for j in range(4):
                 self.dNidx[i][j] = self.j[i].inv[0][0] * e.dNKsi[i][j] + self.j[i].inv[0][1] * e.dNEta[i][j]
