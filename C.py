@@ -9,8 +9,7 @@ class C:
         self.rho = rho
         self.det = np.array(det)
         self.e = e
-        self.p = np.zeros([4, e.n, 2])
-        self.c = np.zeros([4, 4, 4])
+        self.c = np.zeros([self.e.n, 4, 4])
         self.C = np.zeros([4, 4])
         print(self.det)
         pom = 0
@@ -21,6 +20,6 @@ class C:
                 N3 = 0.25 * (1 + self.e.tab[j]) * (1 + self.e.tab[i])
                 N4 = 0.25 * (1 - self.e.tab[j]) * (1 + self.e.tab[i])
                 b = np.array([[N1, N2, N3, N4], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]])
-                self.c[i] += (self.e.waga[j] * np.matmul(b.T, b) * rho * cw * self.det[pom])
+                self.c[i] += (self.e.waga[j] * self.e.waga[i] * np.matmul(b.T, b) * rho * cw * self.det[pom])
                 pom += 1
             self.C += self.c[i]

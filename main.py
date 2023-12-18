@@ -1,5 +1,5 @@
 import numpy as np
-from ElementUniwersalny import ElementUniwersalny
+from jakobian import ElementUniwersalny
 from struktury import *
 from całki import *
 from jakobian import Jakobian
@@ -71,7 +71,7 @@ h = Hmatrix(xpom, ypom, e, gd.Data["Conductivity"])
 # print(h.dNidx)
 # print(h.H)
 
-l = licz(grid3, gd3, 2,10)
+l = licz(grid, gd, 2,10)
 
 l.summary(3)
 # h = HBC(e, 25, 0.0125)

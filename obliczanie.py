@@ -7,7 +7,7 @@ from Hmatrix import Hmatrix
 from HBC import HBC
 from P import P
 from C import C
-from pyevtk.hl import gridToVTK
+# from pyevtk.hl import gridToVTK
 
 
 class licz:
