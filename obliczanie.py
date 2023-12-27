@@ -1,4 +1,6 @@
 import numpy as np
+
+from C import C
 from ElementUniwersalny import ElementUniwersalny
 from struktury import *
 from całki import *
@@ -6,8 +8,7 @@ from jakobian import Jakobian
 from Hmatrix import Hmatrix
 from HBC import HBC
 from P import P
-from C import C
-# from pyevtk.hl import gridToVTK
+from tovtk import zapis_do_vtk
 
 
 class licz:
@@ -49,7 +50,7 @@ class licz:
         for i in range(int(gd.Data["Elements number"])):
             self.H[i] = Hmatrix(self.xe[i], self.ye[i], self.e, gd.Data["Conductivity"]).H
             self.C[i] = C(self.e, gd.Data["SpecificHeat"], gd.Data["Density"],
-                                      [Jakobian(self.xe[i], self.ye[i], self.e, j).det for j in range(self.e.n ** 2)]).C
+                          [Jakobian(self.xe[i], self.ye[i], self.e, j).det for j in range(self.e.n ** 2)]).C
 
         for i in range(int(gd.Data["Elements number"])):
             pom = []
@@ -96,8 +97,15 @@ class licz:
             if i == 0: self.PCpom = self.PC
             self.solve[i + 1] = np.linalg.solve(self.HC, self.PC)
 
-        # for i in range(self.solve.shape[0]):
-        #     gridToVTK(f"./solve/foo{i}", np.array(self.x), np.array(self.y), np.array([j for j in range(grid.Nodes.size)]), pointData={"temp": self.solve[i]})
+        cells = []
+        for i in range(len(self.elements)):
+            pom = []
+            for j in self.elements[i].E:
+                pom.append(j)
+            cells.append(pom)
+
+        for i in range(self.solve.shape[0]):
+            zapis_do_vtk(self.x, self.y, cells, self.solve[i], f"./vtk/foo{i}.vtk")
 
     def summary(self, z=7):
         for i in range(int(self.gd.Data["Elements number"])):
@@ -130,7 +138,7 @@ class licz:
         print("PC:")
         print(self.PCpom.round(decimals=z))
         print()
-        for i in range(self.iter+1):
+        for i in range(self.iter + 1):
             print(f"Solve {i}: ")
             print(self.solve[i].round(decimals=z))
             print(f"Min {np.min(self.solve[i])}, Max {np.max(self.solve[i])}")

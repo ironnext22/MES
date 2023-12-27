@@ -71,7 +71,7 @@ h = Hmatrix(xpom, ypom, e, gd.Data["Conductivity"])
 # print(h.dNidx)
 # print(h.H)
 
-l = licz(grid, gd, 2,10)
+l = licz(grid2, gd2, 2,10)
 
 l.summary(3)
 # h = HBC(e, 25, 0.0125)
