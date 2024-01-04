@@ -3,6 +3,7 @@ from całki import *
 from jakobian import Jakobian
 
 
+#Macierz C określa zmianę własności ciała pod wpływem naprężeń/(podwyższenia temperatury)
 class C:
     def __init__(self, e: ElementUniwersalny, cw, rho, det):
         self.cw = cw
@@ -11,7 +12,6 @@ class C:
         self.e = e
         self.c = np.zeros([self.e.n, 4, 4])
         self.C = np.zeros([4, 4])
-        print(self.det)
         pom = 0
         for i in range(e.n):
             for j in range(e.n):

@@ -6,6 +6,7 @@ from Hmatrix import Hmatrix
 import numpy as np
 
 
+
 class HBC:
     def __init__(self, e: ElementUniwersalny, alfa, det, s=None):
         if s is None:
@@ -14,8 +15,8 @@ class HBC:
         # self.det = det
         self.det = np.array(det)
         self.e = e
-        self.p = np.zeros([4, e.n, 2])
         self.hbc = np.zeros([4, 4, 4])
+        self.p = np.zeros([4, e.n, 2])
         self.HBC = np.zeros([4, 4])
         self.pom = np.zeros([e.n, 2])
         for i in range(e.n):

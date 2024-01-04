@@ -1,3 +1,4 @@
+from ElementUniwersalny import ElementUniwersalny
 from struktury import *
 from obliczanie import licz
 
@@ -10,6 +11,5 @@ grid2, gd2 = w2.wczytaj()
 grid3, gd3 = w3.wczytaj()
 grid4, gd4 = w4.wczytaj()
 
-oblicz = licz(grid3, gd3, 4, 10)
-
+oblicz = licz(grid3, gd3, 2, 10)
 oblicz.summary(3)

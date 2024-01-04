@@ -1,9 +1,21 @@
 import math
 import numpy as np
 
+#2 punkty
+#punkty: -sqrt(1/3), sqrt(1/3)
+#wagi: 1,1
+
+#3 punkty
+#punkty: -sqrt(3/5) , 0 , sqrt(3/5)
+#wagi: 5/9, 8/9, 5/9
+
+#4 punkty
+#punkty: -0.86113631, -0.33998104,  0.33998104,  0.86113631
+#wagi: 0.34785485, 0.65214515, 0.65214515, 0.34785485
+
 
 class gauss:
-    def __init__(self,k,d):
+    def __init__(self,k):
         self.k = k
         self.x, self.w = np.polynomial.legendre.leggauss(self.k)
     def całka(self,f):

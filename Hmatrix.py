@@ -1,16 +1,17 @@
 import numpy as np
+
 from ElementUniwersalny import ElementUniwersalny
-from struktury import *
 from całki import *
 from jakobian import Jakobian
 
 
+#Macierz współczynników układu równań
 class Hmatrix:
-    def __init__(self, x, y, e: ElementUniwersalny, k:float):
+    def __init__(self, x, y, e: ElementUniwersalny, k: float):
         self.e = e
-        self.j = [Jakobian(x, y, e, i) for i in range(e.n**2)]
-        self.dNidx = np.zeros([e.n ** 2,4])
-        self.dNidy = np.zeros([e.n ** 2,4])
+        self.j = [Jakobian(x, y, e, i) for i in range(e.n ** 2)]
+        self.dNidx = np.zeros([e.n ** 2, 4])
+        self.dNidy = np.zeros([e.n ** 2, 4])
         self.h = np.zeros([e.n ** 2, 4, 4])
         self.H = np.zeros([4, 4])
         for i in range(e.n ** 2):

@@ -2,6 +2,7 @@ from ElementUniwersalny import ElementUniwersalny
 import numpy as np
 
 
+#Wektor P - wektor prawej części układu równań
 class P:
     def __init__(self, e: ElementUniwersalny, alfa, det, t, s=None):
         if s is None:
