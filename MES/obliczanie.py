@@ -1,18 +1,19 @@
 import numpy as np
 
-from C import C
-from ElementUniwersalny import ElementUniwersalny
-from struktury import *
-from całki import *
-from jakobian import Jakobian
-from Hmatrix import Hmatrix
-from HBC import HBC
-from P import P
-from tovtk import zapis_do_vtk
+from MES.C import C
+from MES.ElementUniwersalny import ElementUniwersalny
+from MES.struktury import *
+from MES.całki import *
+from MES.jakobian import Jakobian
+from MES.Hmatrix import Hmatrix
+from MES.HBC import HBC
+from MES.P import P
+from MES.tovtk import zapis_do_vtk
+import pandas as pd
 
 
 class licz:
-    def __init__(self, grid: Grid, gd: GlobalData, n: int, iterations: int):
+    def __init__(self, grid: Grid, gd: GlobalData, n: int, iterations: int, it=None):
         self.grid = grid
         self.gd = gd
         self.e = ElementUniwersalny(n)
@@ -30,6 +31,8 @@ class licz:
         self.HC = np.zeros([grid.Nodes.size, grid.Nodes.size], dtype=float)
         self.PC = np.zeros(grid.Nodes.size, dtype=float)
         self.T0 = np.array([float(gd.Data["InitialTemp"]) for i in range(grid.Nodes.size)])
+        if it is not None:
+            self.T0 = np.array([float(it[i]) for i in range(len(it))])
         self.Cglob = np.zeros([grid.Nodes.size, grid.Nodes.size], dtype=float)
         self.solve = np.zeros([iterations + 1, grid.Nodes.size], dtype=float)
         self.solve[0] = self.T0
@@ -153,6 +156,14 @@ class licz:
             print(f"Min {np.min(self.solve[i])}, Max {np.max(self.solve[i])}")
             print()
 
+    def wynikiminmax(self):
+        max = np.array([])
+        min = np.array([])
+        for i in self.solve:
+            max = np.append(max,np.max(i))
+            min = np.append(min,np.min(i))
+        p = pd.DataFrame({'min': min, 'max': max})
+        p.to_csv("wynikiminmax.csv")
 
 def cd(n1: Node, n2: Node):
     return np.sqrt(np.power(n1.x - n2.x, 2) + np.power(n1.y - n2.y, 2))

@@ -1,6 +1,5 @@
-from ElementUniwersalny import ElementUniwersalny
-from całki import *
-from jakobian import Jakobian
+from MES.ElementUniwersalny import ElementUniwersalny
+from MES.całki import *
 
 
 #Macierz C określa zmianę własności ciała pod wpływem naprężeń/(podwyższenia temperatury)

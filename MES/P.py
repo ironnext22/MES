@@ -1,4 +1,4 @@
-from ElementUniwersalny import ElementUniwersalny
+from MES.ElementUniwersalny import ElementUniwersalny
 import numpy as np
 
 

@@ -1,8 +1,8 @@
 import numpy as np
 
-from ElementUniwersalny import ElementUniwersalny
-from całki import *
-from jakobian import Jakobian
+from MES.ElementUniwersalny import ElementUniwersalny
+from MES.całki import *
+from MES.jakobian import Jakobian
 
 
 #Macierz współczynników układu równań

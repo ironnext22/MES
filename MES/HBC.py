@@ -1,8 +1,4 @@
-from ElementUniwersalny import ElementUniwersalny
-from struktury import *
-from całki import *
-from jakobian import Jakobian
-from Hmatrix import Hmatrix
+from MES.ElementUniwersalny import ElementUniwersalny
 import numpy as np
 
 

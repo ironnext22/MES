@@ -1,6 +1,5 @@
-from ElementUniwersalny import ElementUniwersalny
-from struktury import *
-from obliczanie import licz
+from MES.struktury import *
+from MES.obliczanie import licz
 
 w = Dane("Test1_4_4.txt")
 w2 = Dane("Test3_31_31_kwadrat.txt")
@@ -13,3 +12,4 @@ grid4, gd4 = w4.wczytaj()
 
 oblicz = licz(grid3, gd3, 2, 10)
 oblicz.summary(3)
+# oblicz.wynikiminmax()

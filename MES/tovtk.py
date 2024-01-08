@@ -1,5 +1,3 @@
-import meshio
-import numpy as np
 
 
 def zapis_do_vtk(x_values, y_values, cells, values, output_filename):

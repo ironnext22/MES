@@ -1,5 +1,5 @@
 import numpy as np
-from ElementUniwersalny import ElementUniwersalny
+from MES.ElementUniwersalny import ElementUniwersalny
 
 
 class Jakobian:
